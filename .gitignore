@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Generated output
+parser/output/
+
+# WhatsApp export folders (contain private chat data)
+WhatsApp Chat*/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary files
+*.tmp
+*~
+
+# IDE
+.vscode/
+.idea/

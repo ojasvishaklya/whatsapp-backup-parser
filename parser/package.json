@@ -1,0 +1,13 @@
+{
+  "name": "whatsapp-chat-parser",
+  "version": "1.0.0",
+  "description": "Parse WhatsApp chat exports and generate HTML viewer",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "parse": "node src/index.js"
+  },
+  "keywords": ["whatsapp", "parser", "chat", "html", "viewer"],
+  "author": "",
+  "license": "MIT"
+}
