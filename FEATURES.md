@@ -27,6 +27,11 @@
   - Range: 12px to 24px
 - ✅ **Search button** (🔍)
   - Opens browser's native search (Ctrl+F / Cmd+F)
+- ✅ **Jump to Date button** (📅)
+  - Quick date picker to navigate to any date
+  - Shows date range from chat history
+  - Keyboard shortcut: Ctrl+G / Cmd+G
+  - Smooth scroll to selected date
 - ✅ **Scroll to bottom** (⬇ Latest)
   - Jumps to latest messages
 
@@ -34,6 +39,9 @@
 - ✅ **Ctrl/Cmd + Plus** - Increase font size
 - ✅ **Ctrl/Cmd + Minus** - Decrease font size
 - ✅ **Ctrl/Cmd + F** - Search (browser native)
+- ✅ **Ctrl/Cmd + G** - Open date picker
+- ✅ **Enter** - Jump to selected date / Next search result
+- ✅ **Escape** - Close date picker / Close search
 - ✅ **End key** - Scroll to bottom
 
 ### Media Support
@@ -131,7 +139,7 @@ If you want to add later:
 
 ### Easy to Add
 - [ ] Dark mode toggle
-- [ ] Jump to date picker
+- [x] Jump to date picker
 - [ ] Show/hide media toggle
 - [ ] Export statistics
 

@@ -6,10 +6,11 @@ Parse WhatsApp chat exports and generate a standalone HTML viewer that works off
 
 - ✅ **WhatsApp-like UI** - Green theme, message bubbles, date dividers
 - ✅ **Custom Search** - Highlight all matches, navigate with arrows
+- ✅ **Jump to Date** - Quick date picker to navigate to any date
 - ✅ **Font Controls** - Increase/decrease text size (A- / A+)
 - ✅ **Clickable Links** - YouTube, Instagram, all URLs auto-detected
 - ✅ **Media Support** - Images, audio, video, documents
-- ✅ **Keyboard Shortcuts** - Ctrl+F search, Ctrl+Plus/Minus font size
+- ✅ **Keyboard Shortcuts** - Ctrl+F search, Ctrl+G date picker, Ctrl+Plus/Minus font size
 - ✅ **Mobile-Friendly** - Responsive design, works on any screen
 - ✅ **Completely Offline** - No internet needed after initial load
 - ✅ **Zero Dependencies** - Pure Node.js, no npm packages
@@ -71,6 +72,7 @@ parser/output/
 ## HTML Features
 
 - **Search** - Type to highlight all matches (🔍 button or Ctrl+F)
+- **Jump to Date** - Quick date picker to navigate to any date (📅 button or Ctrl+G)
 - **Font Size** - A- and A+ buttons adjust text size
 - **Scroll to Bottom** - ⬇ Latest button jumps to newest messages
 - **Click Images** - Opens full size in new tab
@@ -167,11 +169,12 @@ cd parser && npm run parse
 ## Keyboard Shortcuts
 
 - **Ctrl/Cmd + F** - Open search
+- **Ctrl/Cmd + G** - Open date picker
 - **Ctrl/Cmd + Plus** - Increase font size
 - **Ctrl/Cmd + Minus** - Decrease font size
-- **Enter** - Next search result
+- **Enter** - Next search result / Jump to selected date
 - **Shift + Enter** - Previous search result
-- **Escape** - Close search
+- **Escape** - Close search / Close date picker
 - **End** - Scroll to bottom
 
 ## Tips
@@ -231,7 +234,7 @@ Issues and feature requests welcome on GitHub!
 ## Roadmap
 
 - [ ] Dark mode toggle
-- [ ] Jump to date picker
+- [x] Jump to date picker
 - [ ] Filter by sender
 - [ ] Export to PDF
 - [ ] Message statistics

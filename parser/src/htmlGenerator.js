@@ -273,11 +273,12 @@ export async function generateHtmlFile(messages, metadata, outputDir) {
     /* Messages container */
     .messages-container {
       flex: 1;
-      overflow-y: auto;
+      overflow-y: scroll;
       overflow-x: hidden;
       padding: 20px 16px;
       display: flex;
       flex-direction: column;
+      scrollbar-gutter: stable;
     }
 
     /* Date divider */
@@ -485,22 +486,101 @@ export async function generateHtmlFile(messages, metadata, outputDir) {
       background: #ff9800;
     }
 
+    /* Date picker */
+    .date-picker-container {
+      position: fixed;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 16px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      display: none;
+      z-index: 1000;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .date-picker-container.active {
+      display: flex;
+    }
+
+    .date-picker-container label {
+      font-size: 14px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .date-picker-container input[type="date"] {
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 14px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .date-picker-container input[type="date"]:focus {
+      border-color: var(--whatsapp-light-green);
+    }
+
+    .date-picker-container button {
+      background: var(--whatsapp-light-green);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .date-picker-container button:hover {
+      background: var(--whatsapp-green);
+    }
+
+    .date-picker-container button:last-child {
+      background: #f44336;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .date-picker-container button:last-child:hover {
+      background: #d32f2f;
+    }
+
     /* Scrollbar */
     .messages-container::-webkit-scrollbar {
-      width: 6px;
+      width: 12px;
     }
 
     .messages-container::-webkit-scrollbar-track {
-      background: transparent;
+      background: rgba(0,0,0,0.05);
+      border-radius: 6px;
+      margin: 4px 0;
     }
 
     .messages-container::-webkit-scrollbar-thumb {
-      background: rgba(0,0,0,0.2);
-      border-radius: 3px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 6px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
     }
 
     .messages-container::-webkit-scrollbar-thumb:hover {
-      background: rgba(0,0,0,0.3);
+      background: rgba(0,0,0,0.6);
+      background-clip: padding-box;
+    }
+
+    .messages-container::-webkit-scrollbar-thumb:active {
+      background: var(--whatsapp-light-green);
+      background-clip: padding-box;
     }
 
     /* Mobile responsive */
@@ -565,6 +645,7 @@ export async function generateHtmlFile(messages, metadata, outputDir) {
     <button onclick="decreaseFont()" title="Decrease font size">A-</button>
     <button onclick="increaseFont()" title="Increase font size">A+</button>
     <button onclick="toggleSearch()" title="Search in chat">🔍 Search</button>
+    <button onclick="toggleDatePicker()" title="Jump to date">📅 Jump to Date</button>
     <button onclick="scrollToBottom()" title="Go to bottom">⬇ Latest</button>
   </div>
 
@@ -576,6 +657,13 @@ export async function generateHtmlFile(messages, metadata, outputDir) {
     <button onclick="closeSearch()" title="Close">✕</button>
   </div>
 
+  <div class="date-picker-container" id="datePickerContainer">
+    <label for="dateInput">Jump to date:</label>
+    <input type="date" id="dateInput" min="${metadata.dateRange.start}" max="${metadata.dateRange.end}">
+    <button onclick="jumpToDate()" title="Go">Go</button>
+    <button onclick="closeDatePicker()" title="Close">✕</button>
+  </div>
+
   <div class="messages-container" id="messagesContainer">
 `;
 
@@ -583,8 +671,8 @@ export async function generateHtmlFile(messages, metadata, outputDir) {
   dateKeys.forEach(dateKey => {
     const dateMessages = messagesByDate[dateKey];
 
-    // Add date divider
-    html += `    <div class="date-divider"><span>${formatDate(dateMessages[0].timestamp)}</span></div>\n\n`;
+    // Add date divider with data-date attribute for jump-to-date functionality
+    html += `    <div class="date-divider" data-date="${dateKey}"><span>${formatDate(dateMessages[0].timestamp)}</span></div>\n\n`;
 
     // Add messages for this date
     dateMessages.forEach(msg => {
@@ -776,6 +864,56 @@ export async function generateHtmlFile(messages, metadata, outputDir) {
       container.scrollTop = container.scrollHeight;
     }
 
+    // Date picker functionality
+    const datePickerContainer = document.getElementById('datePickerContainer');
+    const dateInput = document.getElementById('dateInput');
+
+    function toggleDatePicker() {
+      if (datePickerContainer.classList.contains('active')) {
+        closeDatePicker();
+      } else {
+        datePickerContainer.classList.add('active');
+        dateInput.focus();
+      }
+    }
+
+    function closeDatePicker() {
+      datePickerContainer.classList.remove('active');
+      dateInput.value = '';
+    }
+
+    function jumpToDate() {
+      const selectedDate = dateInput.value;
+
+      if (!selectedDate) {
+        alert('Please select a date');
+        return;
+      }
+
+      // Find the date divider for this date
+      const dateDividers = document.querySelectorAll('.date-divider');
+      let found = false;
+
+      for (const divider of dateDividers) {
+        const dividerText = divider.textContent.trim();
+        const dividerDate = divider.getAttribute('data-date');
+
+        if (dividerDate === selectedDate) {
+          divider.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+          found = true;
+          closeDatePicker();
+          break;
+        }
+      }
+
+      if (!found) {
+        alert('No messages found for this date');
+      }
+    }
+
     // Image viewer
     function viewImage(src) {
       window.open(src, '_blank');
@@ -812,6 +950,16 @@ export async function generateHtmlFile(messages, metadata, outputDir) {
         }
       });
 
+      // Date picker on Enter key
+      dateInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          jumpToDate();
+        } else if (e.key === 'Escape') {
+          closeDatePicker();
+        }
+      });
+
       // Keyboard shortcuts
       document.addEventListener('keydown', function(e) {
         // Ctrl/Cmd + Plus: increase font
@@ -828,6 +976,11 @@ export async function generateHtmlFile(messages, metadata, outputDir) {
         if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
           e.preventDefault();
           toggleSearch();
+        }
+        // Ctrl/Cmd + G: open date picker
+        if ((e.ctrlKey || e.metaKey) && e.key === 'g') {
+          e.preventDefault();
+          toggleDatePicker();
         }
         // End key: scroll to bottom
         if (e.key === 'End' && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
