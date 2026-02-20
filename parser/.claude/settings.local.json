@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run parse:*)",
+      "Bash(node -e:*)",
+      "Bash(xxd:*)",
+      "Bash(open \"/Users/oshaklya/Projects/personal/whatsapp-chat-parser/parser/output/WhatsApp_Chat_with_____kalki____/chat.html\")",
+      "Bash(/tmp/test-html.html:*)",
+      "Bash(open:*)",
+      "Bash(/tmp/debug-kalki.html:*)",
+      "Bash(xattr:*)"
+    ]
+  }
+}

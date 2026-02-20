@@ -104,8 +104,11 @@ function generateMessageHtml(message) {
 
   // Message content
   if (message.content && message.content.trim()) {
-    // Remove <attached: ...> tags from content since we display media separately
-    let cleanContent = message.content.replace(/<attached:[^>]+>/g, '').trim();
+    // Remove <attached: ...> tags and (file attached) patterns from content since we display media separately
+    let cleanContent = message.content
+      .replace(/<attached:[^>]+>/g, '')
+      .replace(/^.+?\.(jpg|jpeg|png|gif|webp|mp4|avi|mov|mkv|opus|mp3|ogg|aac|m4a|pdf|doc|docx|xls|xlsx) \(file attached\)/gi, '')
+      .trim();
 
     // Only show content if there's text after removing attachment tags
     if (cleanContent) {
@@ -133,11 +136,13 @@ function generateMessageHtml(message) {
       html += `      </audio>\n`;
       html += `    </div>\n`;
     } else if (mediaType === 'video') {
-      html += `    <div class="media">\n`;
-      html += `      <video controls>\n`;
-      html += `        <source src="${mediaPath}" type="video/mp4">\n`;
-      html += `        Your browser does not support video playback.\n`;
-      html += `      </video>\n`;
+      html += `    <div class="media video-placeholder">\n`;
+      html += `      <a href="${mediaPath}" class="video-link" target="_blank">\n`;
+      html += `        <div class="video-thumbnail">\n`;
+      html += `          <div class="play-icon">▶</div>\n`;
+      html += `          <div class="video-info">🎥 ${escapeHtml(filename)}</div>\n`;
+      html += `        </div>\n`;
+      html += `      </a>\n`;
       html += `    </div>\n`;
     } else {
       // Document or other
@@ -382,11 +387,71 @@ export async function generateHtmlFile(messages, metadata, outputDir) {
       opacity: 0.9;
     }
 
-    .media audio,
-    .media video {
+    .media audio {
       max-width: 100%;
       display: block;
       border-radius: 8px;
+    }
+
+    /* Video placeholder */
+    .media.video-placeholder {
+      margin: 8px 0;
+    }
+
+    .video-link {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .video-thumbnail {
+      position: relative;
+      background: linear-gradient(135deg, #667781 0%, #54656f 100%);
+      border-radius: 8px;
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid #d1d7db;
+      min-height: 150px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .video-thumbnail:hover {
+      background: linear-gradient(135deg, #54656f 0%, #42545c 100%);
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .play-icon {
+      width: 60px;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: var(--whatsapp-light-green);
+      transition: all 0.3s ease;
+      padding-left: 4px;
+    }
+
+    .video-thumbnail:hover .play-icon {
+      background: white;
+      transform: scale(1.1);
+    }
+
+    .video-info {
+      color: white;
+      font-size: 13px;
+      font-weight: 500;
+      word-break: break-word;
+      max-width: 100%;
     }
 
     .media.document a {
